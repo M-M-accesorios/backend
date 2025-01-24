@@ -1,16 +1,23 @@
-import { Module } from '@nestjs/common';
+import { Module, OnApplicationBootstrap } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from '../user/user.module';
+import { DatabaseService } from 'src/infrastructure/services/dabatase.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
-    }), 
+    }),
     UserModule,
-   ],
+  ],
   controllers: [],
-  providers: [],
+  providers: [DatabaseService],
 })
-export class AppModule {}
+export class AppModule implements OnApplicationBootstrap {
+  constructor(private readonly databaseService: DatabaseService) { }
+
+  async onApplicationBootstrap() {
+    await this.databaseService.connect();
+  }
+}

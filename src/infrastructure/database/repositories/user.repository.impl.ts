@@ -12,7 +12,6 @@ export class UserRepositoryImplementation implements userRepository {
     }
 
     async findByEmail(email: string): Promise<User | null> {
-        console.log(this.users)
         return this.users.find(user => user.email === email) || null
     }
 }
