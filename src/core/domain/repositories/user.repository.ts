@@ -3,7 +3,7 @@ import { SuccessResponse, ErrorResponse } from "src/infrastructure/types/users/i
 
 export interface userRepository {
     save(user: User): Promise<SuccessResponse | ErrorResponse>;
-    findByEmail(email: string): Promise<User | null>;
-    update(id: string, body: object): Promise<User | null>;
+    findUserById(id: string): Promise<SuccessResponse | ErrorResponse>;
+    update(id: string, body: object): Promise<SuccessResponse | ErrorResponse>;
     delete(id: string): Promise<User | null>;
 }

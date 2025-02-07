@@ -11,9 +11,10 @@ export class UserRepositoryImplementation implements userRepository {
 
     async save(user: User): Promise<SuccessResponse | ErrorResponse> {
         try{
-            user.password = await bcrypt.hash(user.password, 12)
-            const NewUser = new UserModel(user.getCreateData()) 
-            await NewUser.save()
+            const hashedPassword = await bcrypt.hash(user.getPassword(), 12);
+            user.setPassword(hashedPassword);
+            const NewUser = new UserModel(user.getCreateData()); 
+            await NewUser.save();
 
             const token = jwt.sign({
                 id: NewUser._id,
@@ -30,17 +31,42 @@ export class UserRepositoryImplementation implements userRepository {
         } catch(error: unknown) {
             return {
                 success: false,
-                message: error instanceof Error ? error.message :  "An error occures while creating user"
-            }
+                message: `[${UserRepositoryImplementation.name}] ${error instanceof Error ? error.message :  "An error occures while creating user"}`,
+            };
         }
     }
 
-    async findByEmail(email: string): Promise<User | null> {
-        return  null
+    async findUserById(id: string): Promise<SuccessResponse | ErrorResponse> {
+        try {
+            const user = await UserModel.findById(id).select('-__v');
+            if(!user){
+                throw Error('User not found');
+            }
+            return  {
+                data: user,
+                success: true,
+            };
+        } catch (error) {
+            return{
+                success: false,
+                message: `[${UserRepositoryImplementation.name}] ${error instanceof Error ? error.message : 'An error occures while getting user'}`,
+            };
+        }
     }
 
-    async update(id: string, body: object): Promise<User | null> {
-        return null
+    async update(id: string, body: object): Promise<SuccessResponse | ErrorResponse> {
+        try {
+            const updatedUser = await UserModel.findByIdAndUpdate(id, body, { new: true })
+            return {
+                success: true,
+                data: updatedUser,
+            };
+        } catch (error) {
+            return {
+                success: false,
+                message: `[${UserRepositoryImplementation.name}] ${error instanceof Error ? error.message : 'An error occures while updating user'}`,
+            };
+        }
     }
 
     async delete(id: string): Promise<User | null> {

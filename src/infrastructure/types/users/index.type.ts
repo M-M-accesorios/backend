@@ -17,6 +17,7 @@ export type ErrorResponse = {
 export type SuccessResponse = {
     success: boolean;
     token?: string;
+    data?: UserDocument;
 }
 
 export interface UserDocument extends User, Document {}

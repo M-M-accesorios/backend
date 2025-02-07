@@ -1,23 +1,26 @@
+import { User as UserType } from "src/infrastructure/types/users/index.type"
+
 export class User {
     constructor(
-        public firstname: string,
-        public lastname: string,
-        public email: string,
-        public password: string,
-        public phoneNumber: string,
-        public adress: string,
-        public role: string,
+        public user: UserType,
     ){}
 
-    public getCreateData() {
+    public getCreateData(): UserType {
         return {
-            firstname: this.firstname, 
-            lastname: this.lastname, 
-            email: this.email, 
-            password: this.password, 
-            phoneNumber: this.phoneNumber,
-            adress: this.adress,
-            role: this.role,
-        }
+            firstname: this.user.firstname, 
+            lastname: this.user.lastname, 
+            email: this.user.email, 
+            password: this.user.password, 
+            phoneNumber: this.user.phoneNumber,
+            adress: this.user.adress,
+            role: this.user.role,
+        };
+    }
+
+    public getPassword(): string {
+        return this.user.password;
+    }
+    public setPassword(password: string): void {
+        this.user.password = password;
     }
 }
