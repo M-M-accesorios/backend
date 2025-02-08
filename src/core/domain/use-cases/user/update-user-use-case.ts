@@ -1,12 +1,13 @@
 import { UpdateUserDto } from "src/application/dtos/user/update-user.dto";
 import { userRepository } from "../../repositories/user.repository";
+import { SuccessResponse, ErrorResponse } from "src/infrastructure/types/users/index.type";
 
 export class UpdateUserUseCase {
     constructor(public readonly userRepository: userRepository) {}
 
-    execute(id: string, dto: UpdateUserDto) {
+    async execute(id: string, dto: UpdateUserDto): Promise<SuccessResponse | ErrorResponse> {
         try {
-            return this.userRepository.update(id, dto);
+            return await this.userRepository.update(id, dto);
         } catch (error) {
             return {
                 message: `[${UpdateUserDto.name}] ${error instanceof Error ? error.message : 'An error occures while updating user'}`,

@@ -5,17 +5,20 @@ import { CreateUserDto } from 'src/application/dtos/user/create-user.dto';
 import { GetUserUserCase } from 'src/core/domain/use-cases/user/get-user-use-case';
 import { UpdateUserUseCase } from 'src/core/domain/use-cases/user/update-user-use-case';
 import { UpdateUserDto } from 'src/application/dtos/user/update-user.dto';
+import { DeleteUserUseCase } from 'src/core/domain/use-cases/user/delete-user-use-case';
 
 @Controller('users')
 export class UserController {
   private readonly createUserUseCase: CreateUserUseCase;
   private readonly getUserUseCase: GetUserUserCase;
   private readonly updateUserUseCase: UpdateUserUseCase;
+  private readonly deleteUserUseCase: DeleteUserUseCase;
 
   constructor(@Inject('UserRepository') userRepository: UserRepositoryImplementation) {
     this.createUserUseCase = new CreateUserUseCase(userRepository); 
     this.getUserUseCase = new GetUserUserCase(userRepository); 
     this.updateUserUseCase = new UpdateUserUseCase(userRepository); 
+    this.deleteUserUseCase = new DeleteUserUseCase(userRepository); 
   }
 
   @Get("/:id")
@@ -31,14 +34,11 @@ export class UserController {
 
   @Put('/:id')
   async updateUserById(@Body() body: UpdateUserDto, @Param('id') id: string) {
-    return this.updateUserUseCase.execute(id, body)
+    return this.updateUserUseCase.execute(id, body);
   }
 
   @Delete("/:id")
   async deleteUserById(@Param('id') id: string) {
-    return  {
-      method: "delete",
-      id
-    }
+    return this.deleteUserUseCase.execute(id);
   }
 }
