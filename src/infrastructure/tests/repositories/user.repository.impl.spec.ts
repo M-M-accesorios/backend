@@ -48,35 +48,26 @@ describe.only("UserRepositoryImplementation", () => {
         it("when bcrypt fails should throw an exception", async () => {
             fixtures.whenBcryptHashFails();
 
-            const result = await fixtures.whenSaveUser();
-
-            expect(result).toEqual({
-                message: "[UserRepositoryImplementation] Password hashing failed",
-                success: false,
-            });
+            await expect(fixtures.whenSaveUser()).rejects.toThrow(
+                "Password hashing failed"
+            );
         });
 
         it("when user save fails should throw an exception", async () => {
             fixtures.whenUserSaveFails();
 
-            const result = await fixtures.whenSaveUser();
-
-            expect(result).toEqual({
-                message: "[UserRepositoryImplementation] User creation failed",
-                success: false,
-            });
+            await expect(fixtures.whenSaveUser()).rejects.toThrow(
+                "User creation failed"
+            );
         });
         
         it("when JWT signing fails should throw an exception", async () => {
             fixtures.whenUserSaveSucceeds();
             fixtures.whenJwtSignFails();
 
-            const result = await fixtures.whenSaveUser();
-
-            expect(result).toEqual({
-                message: "[UserRepositoryImplementation] Token generation failed",
-                success: false,
-            });
+            await expect(fixtures.whenSaveUser()).rejects.toThrow(
+                "Token generation failed"
+            );
         });
     });
 
@@ -91,7 +82,7 @@ describe.only("UserRepositoryImplementation", () => {
                 lastname: "Doe",
                 email: "test@test.com",
                 password: "hashedpassword",
-                adress: "146 rue des rossignoles",
+                address: "146 rue des rossignoles",
                 phoneNumber: "0674502459",
                 role: "customer",
             });
@@ -120,7 +111,7 @@ describe.only("UserRepositoryImplementation", () => {
                 lastname: "Doe",
                 email: "test@test.com",
                 password: "hashedpassword",
-                adress: "146 rue des rossignoles",
+                address: "146 rue des rossignoles",
                 phoneNumber: "0674502459",
                 role: "customer",
             });
@@ -143,7 +134,7 @@ describe.only("UserRepositoryImplementation", () => {
                 lastname: "Doe",
                 email: "test@test.com",
                 password: "hashedpassword",
-                adress: "146 rue des rossignoles",
+                address: "146 rue des rossignoles",
                 phoneNumber: "0674502459",
                 role: "customer",
             });
@@ -166,7 +157,7 @@ const getFixtures = () => {
         lastname: "Doe",
         email: "test@test.com",
         password: 'plainpassword',
-        adress: '146 rue des rossignoles',
+        address: '146 rue des rossignoles',
         phoneNumber: '0674502459',
         role: 'customer',
     };
@@ -180,7 +171,7 @@ const getFixtures = () => {
         lastname: "Franck",
         email: "test@test.com",
         password: "hashedpassword",
-        adress: "146 rue des rossignoles",
+        address: "146 rue des rossignoles",
         phoneNumber: "0674502459",
         role: "admin",
 }
@@ -204,7 +195,7 @@ const getFixtures = () => {
                 lastname: "Doe",
                 email: "test@test.com",
                 password: "hashedpassword",
-                adress: "146 rue des rossignoles",
+                address: "146 rue des rossignoles",
                 phoneNumber: "0674502459",
                 role: "customer",
             }),
@@ -251,7 +242,6 @@ const getFixtures = () => {
     const thenShouldReturnExpectedResult = (result: any) => {
         expect(result).toEqual({
             token: mockToken,
-            success: true,
         });
     };
 
@@ -264,7 +254,7 @@ const getFixtures = () => {
                 lastname: "Doe",
                 email: "test@test.com",
                 password: "hashedpassword",
-                adress: "146 rue des rossignoles",
+                address: "146 rue des rossignoles",
                 phoneNumber: "0674502459",
                 role: "customer",
             }),
@@ -302,7 +292,7 @@ const getFixtures = () => {
                 lastname: "Doe",
                 email: "test@test.com",
                 password: "hashedpassword",
-                adress: "146 rue des rossignoles",
+                address: "146 rue des rossignoles",
                 phoneNumber: "0674502459",
                 role: "customer",
         }));
@@ -325,7 +315,7 @@ const getFixtures = () => {
             lastname: "Doe",
             email: "test@test.com",
             password: "hashedpassword",
-            adress: "146 rue des rossignoles",
+            address: "146 rue des rossignoles",
             phoneNumber: "0674502459",
             role: "customer",
         }));

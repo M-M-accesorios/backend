@@ -12,8 +12,8 @@ export class User {
             email: this.user.email, 
             password: this.user.password, 
             phoneNumber: this.user.phoneNumber,
-            adress: this.user.adress,
-            role: this.user.role,
+            address: this.user.address,
+            role: 'cutomer',
         };
     }
 

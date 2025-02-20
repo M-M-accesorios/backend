@@ -6,8 +6,8 @@ export interface User {
     email: string;
     password: string;
     phoneNumber: string;
-    adress: string;
-    role: string;
+    address: string;
+    role?: string;
 }
 
 export type ErrorResponse = {
@@ -18,6 +18,10 @@ export type SuccessResponse = {
     success: boolean;
     token?: string;
     data?: UserDocument;
+}
+
+export type TokenResponse = {
+    token: string;
 }
 
 export interface UserDocument extends User, Document {}

@@ -6,6 +6,8 @@ import { GetUserUserCase } from 'src/core/domain/use-cases/user/get-user-use-cas
 import { UpdateUserUseCase } from 'src/core/domain/use-cases/user/update-user-use-case';
 import { UpdateUserDto } from 'src/application/dtos/user/update-user.dto';
 import { DeleteUserUseCase } from 'src/core/domain/use-cases/user/delete-user-use-case';
+import { loginUseCase } from 'src/core/domain/use-cases/user/login-use-case';
+import { LoginUserDto } from 'src/application/dtos/user/login.dto';
 
 @Controller('users')
 export class UserController {
@@ -13,18 +15,25 @@ export class UserController {
   private readonly getUserUseCase: GetUserUserCase;
   private readonly updateUserUseCase: UpdateUserUseCase;
   private readonly deleteUserUseCase: DeleteUserUseCase;
+  private readonly loginUseCase: loginUseCase;
 
   constructor(@Inject('UserRepository') userRepository: UserRepositoryImplementation) {
     this.createUserUseCase = new CreateUserUseCase(userRepository); 
     this.getUserUseCase = new GetUserUserCase(userRepository); 
     this.updateUserUseCase = new UpdateUserUseCase(userRepository); 
     this.deleteUserUseCase = new DeleteUserUseCase(userRepository); 
+    this.loginUseCase = new loginUseCase(userRepository); 
   }
 
   @Get("/:id")
   async getUserById(@Param('id') id: string) {
 
     return this.getUserUseCase.execute(id);
+  }
+
+  @Post('/login')
+  async login(@Body() body: LoginUserDto) {
+    return this.loginUseCase.execute(body);
   }
 
   @Post()
