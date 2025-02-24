@@ -1,14 +1,14 @@
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { BadRequestException, HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { userRepository } from "src/core/domain/repositories/user.repository";
+import { UserRepository } from "src/core/domain/repositories/user.repository";
 import { ErrorResponse, SuccessResponse, User } from 'src/infrastructure/types/users/index.type';
 import { UserModel } from '../models/user.model';
 import { LoginUserDto } from 'src/application/dtos/user/login.dto';
 import { TokenResponse } from 'src/infrastructure/types/users/index.type';
 
 @Injectable()
-export class UserRepositoryImplementation implements userRepository {
+export class UserRepositoryImplementation implements UserRepository {
 
     async save(user: User): Promise<TokenResponse> {
         try{
