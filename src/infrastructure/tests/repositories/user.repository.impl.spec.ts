@@ -19,7 +19,7 @@ UserModel.findByIdAndUpdate = jest.fn();
 UserModel.findById = jest.fn();
 UserModel.findByIdAndDelete = jest.fn();
 
-describe.only("UserRepositoryImplementation", () => {
+describe("UserRepositoryImplementation", () => {
     let fixtures: ReturnType<typeof getFixtures>;
 
     beforeAll(() => {
