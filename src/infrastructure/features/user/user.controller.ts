@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Put, Delete, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Put, Delete, Param, UseGuards, Req } from '@nestjs/common';
 import { CreateUserUseCase } from 'src/core/domain/use-cases/user/create-user.use-case';
 import { CreateUserDto } from 'src/application/dtos/user/create-user.dto';
 import { GetUserUserCase } from 'src/core/domain/use-cases/user/get-user-use-case';
@@ -7,6 +7,8 @@ import { UpdateUserDto } from 'src/application/dtos/user/update-user.dto';
 import { DeleteUserUseCase } from 'src/core/domain/use-cases/user/delete-user-use-case';
 import { LoginUseCase } from 'src/core/domain/use-cases/user/login-use-case';
 import { LoginUserDto } from 'src/application/dtos/user/login.dto';
+import { AuthGuard } from 'src/infrastructure/guards/auth.guard';
+import { GetUserRequest } from 'src/infrastructure/types/users/index.type';
 
 @Controller('users')
 export class UserController {
@@ -20,10 +22,10 @@ export class UserController {
 
   ) {}
 
-  @Get("/:id")
-  async getUserById(@Param('id') id: string) {
-
-    return this.getUserUseCase.execute(id);
+  @UseGuards(AuthGuard)
+  @Get("/profile")
+  async getUserById(@Req() req: GetUserRequest) {
+    return this.getUserUseCase.execute(req.id);
   }
 
   @Post('/login')
