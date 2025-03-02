@@ -6,6 +6,7 @@ import { GetUserUserCase } from "src/core/domain/use-cases/user/get-user-use-cas
 import { UpdateUserUseCase } from "src/core/domain/use-cases/user/update-user-use-case";
 import { DeleteUserUseCase } from "src/core/domain/use-cases/user/delete-user-use-case";
 import { LoginUseCase } from "src/core/domain/use-cases/user/login-use-case";
+import { AuthGuard } from "src/infrastructure/guards/auth.guard";
 
 @Module({
     controllers: [ UserController ],
@@ -15,6 +16,7 @@ import { LoginUseCase } from "src/core/domain/use-cases/user/login-use-case";
         UpdateUserUseCase,
         DeleteUserUseCase,
         LoginUseCase,
+        AuthGuard,
         {
             provide: 'UserRepository',
             useClass: UserRepositoryImplementation,

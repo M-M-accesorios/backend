@@ -1,3 +1,4 @@
+import { Request } from "express";
 import { Document } from "mongoose";
 
 export interface User {
@@ -22,6 +23,10 @@ export type SuccessResponse = {
 
 export type TokenResponse = {
     token: string;
+}
+
+export interface GetUserRequest extends Request{
+    id: string;
 }
 
 export interface UserDocument extends User, Document {}
