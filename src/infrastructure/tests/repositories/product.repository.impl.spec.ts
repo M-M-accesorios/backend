@@ -121,6 +121,7 @@ const getFixtures = () => {
         "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas neque dolor, pharetra vitae lectus ut, ornare ultricies lacus. Donec feugiat velit eget lorem mattis, in eleifend nisi placerat. Duis dignissim odio convallis massa lacinia, non malesuada metus interdum. Vivamus eget ligula quis purus pharetra ornare. Vestibulum non accumsan orci. Maecenas.",
         "ref": "MM25979412",
         "image": "/img/product12.jpg",
+        "categories": ["123456789", "9874654321"]
     };
 
     const mockUpdatedProduct = {

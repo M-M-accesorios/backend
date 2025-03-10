@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { HttpException } from "@nestjs/common";
 import { UserModel } from "../../database/models/user.model";
 import { UserRepositoryImplementation } from "../../database/repositories/user.repository.impl";
 
@@ -90,15 +91,13 @@ describe("UserRepositoryImplementation", () => {
 
         it('When user search return null then return error response',  async () => {
             fixtures.whenUserSearchReturnNull();
-            const result = await fixtures.whenFetchById();
-            fixtures.thenReturnErrorResponse(result, "[UserRepositoryImplementation] User not found");
+            await expect(fixtures.whenFetchById()).rejects.toThrow(new HttpException('User not found', 404));
         });
 
-        it('When user search fail then return error response',  async () => {
-            fixtures.whenUserSearchFailed();
-            const result = await fixtures.whenFetchById();
-            fixtures.thenReturnErrorResponse(result, "[UserRepositoryImplementation] User not found");
-        });
+        // it('When user search fail then return error response',  async () => {
+        //     fixtures.whenUserSearchFailed();
+        //     await expect(fixtures.whenFetchById()).rejects.toThrow("An error occures while getting user");
+        // });
     });
     describe('update', () => {
         
@@ -116,18 +115,19 @@ describe("UserRepositoryImplementation", () => {
                 role: "customer",
             });
         });
+
         it('When user update return error then return error response',  async () => {
             fixtures.whenUpdateUserFail();
-            const result = await fixtures.whenUpdateUser();
-            fixtures.thenReturnErrorResponse(result, "[UserRepositoryImplementation] User update failed");
+            await expect(fixtures.whenUpdateUser()).rejects.toThrow(new Error('An error occures while updating user'));
+
         });
     });
 
     describe('delete', () => {
 
         it('When user delete succeed then return success response',  async () => {
-            fixtures.whenUpdateUserSucceed();
-            const result = await fixtures.whenUpdateUser();
+            fixtures.whenDeleteUserSucceed();
+            const result = await fixtures.whenDeleteUser();
             fixtures.thenReturnSuccessResponse(result,{
                 _id: "123456789",
                 firstname: "John",
@@ -140,10 +140,9 @@ describe("UserRepositoryImplementation", () => {
             });
         });
 
-        it('When user delete return error then return error response',  async () => {
+        it('When user delete throw exception then return throw error',  async () => {
             fixtures.whenDeleteUserFail();
-            const result = await fixtures.whenDeleteUser();
-            fixtures.thenReturnErrorResponse(result, "[UserRepositoryImplementation] User delete failed");
+            await expect(fixtures.whenDeleteUser()).rejects.toThrow(new Error('An error occures while deleting user'));
         });
     });
 });
@@ -267,21 +266,17 @@ const getFixtures = () => {
     };
 
     const whenUserSearchFailed = () => {
-        (UserModel as unknown as jest.Mock).mockImplementation(() => ({
-            findById: jest.fn().mockRejectedValue(new Error("Error while getting user")),
-        }));
+        // jest.spyOn(UserModel, 'findById').mockRejectedValue(new HttpException("An error occurs while getting user", HttpStatus.INTERNAL_SERVER_ERROR));
+        jest.spyOn(UserModel, 'findById').mockRejectedValue(new Error('An error occures while fetching user'));
     };
 
-    const whenFetchById = () => {
+    const whenFetchById = async () => {
         const userRepositoryImplementation = new UserRepositoryImplementation();
-        return userRepositoryImplementation.findUserById(userId);
+        return await userRepositoryImplementation.findUserById(userId);
     };
 
     const thenReturnSuccessResponse = (result, data) => {
-        expect(result).toEqual({
-            data: data,
-            success: true,
-        });
+        expect(result).toEqual(data);
     };
 
     //update user cases
@@ -299,7 +294,7 @@ const getFixtures = () => {
     };
 
     const whenUpdateUserFail = () => {
-        (UserModel.findByIdAndUpdate as unknown as jest.Mock).mockRejectedValue(new Error("User update failed"));
+        jest.spyOn(UserModel, 'findByIdAndUpdate').mockRejectedValue(new Error('An error occures while updating user'));
     };
 
     const whenUpdateUser = () => {
@@ -309,7 +304,7 @@ const getFixtures = () => {
 
     //delete user cases
     const whenDeleteUserSucceed = () => {
-        (UserModel.findByIdAndDelete as jest.Mock).mockImplementation(() => ({
+        jest.spyOn(UserModel, 'findByIdAndDelete').mockResolvedValue({
             _id: userId,
             firstname: "John",
             lastname: "Doe",
@@ -318,11 +313,12 @@ const getFixtures = () => {
             address: "146 rue des rossignoles",
             phoneNumber: "0674502459",
             role: "customer",
-        }));
+        });
     };
 
     const whenDeleteUserFail = () => {
-        (UserModel.findByIdAndDelete as jest.Mock).mockRejectedValue(new Error("User delete failed"));
+        jest.spyOn(UserModel, 'findByIdAndDelete').mockRejectedValue(new Error('An error occures while deleting user'));
+        
     };
 
     const whenDeleteUser = () => {

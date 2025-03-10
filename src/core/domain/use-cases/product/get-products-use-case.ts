@@ -6,9 +6,9 @@ import { ProductDocument } from "src/infrastructure/types/products";
 export class GetAllProductsUseCase {
     constructor(@Inject('ProductRepository') private readonly productRepository: ProductRepository) {};
 
-    async execute(): Promise<ProductDocument[]> {
+    async execute(category?: string): Promise<ProductDocument[]> {
         try {
-            return await this.productRepository.getAllProducts();
+            return await this.productRepository.getAllProducts(category);
         } catch (error) {
             console.error(`[${this.constructor.name}] Error while getting products:`, error);
             throw error;

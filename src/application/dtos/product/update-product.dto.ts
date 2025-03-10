@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString } from "class-validator";
+import { IsArray, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class UpdateProductDto {
     @IsString()
@@ -20,4 +20,8 @@ export class UpdateProductDto {
     @IsString()
     @IsOptional()
     image?: string;
+
+    @IsArray()
+    @IsOptional()
+    categories?: string[];
 };

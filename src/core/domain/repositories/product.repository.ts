@@ -3,7 +3,7 @@ import { UpdateProductDto } from "src/application/dtos/product/update-product.dt
 import { ProductDocument } from "src/infrastructure/types/products";
 
 export interface ProductRepository {
-    getAllProducts(): Promise<ProductDocument[]>;
+    getAllProducts(category?: string): Promise<ProductDocument[]>;
     createProduct(product: CreateProductDto): Promise<ProductDocument>;
     getProductById(id: string): Promise<ProductDocument>;
     updateProductById(id: string, body: UpdateProductDto): Promise<ProductDocument>;
