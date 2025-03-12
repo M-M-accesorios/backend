@@ -1,4 +1,4 @@
-import { InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { HttpException, HttpStatus, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { CategoryModel } from "../../database/models/category.model";
 import { CategoryRepositoryImplementation } from "../../database/repositories/category.repository.impl";
 
@@ -22,7 +22,7 @@ describe('CategoryRepository', () => {
 
         it('When fetch all categories failed should throw exception', async () => {
             fixtures.whenFinAllCategoriesFailed();
-            await expect(fixtures.whenFetchCategories()).rejects.toThrow("An error occures while getting categories");
+            await expect(fixtures.whenFetchCategories()).rejects.toThrow(new HttpException("An error occures while getting categories", HttpStatus.INTERNAL_SERVER_ERROR));
         })
     })
 
@@ -53,7 +53,7 @@ describe('CategoryRepository', () => {
 
         it('When create category failed should throw exception', async () => {
             fixtures.whenUpdateCategoryFailed();
-            await expect(fixtures.whenCreateCategory()).rejects.toThrow(new InternalServerErrorException("An error occures while creating category"));
+            await expect(fixtures.whenCreateCategory()).rejects.toThrow(new HttpException("An error occures while creating category",  HttpStatus.INTERNAL_SERVER_ERROR));
         });
     });
 
@@ -66,12 +66,12 @@ describe('CategoryRepository', () => {
 
         it('When category not found should throw NotFoundException', async () => {
             fixtures.whenCategoryToDeleteNotFound();
-            await expect(fixtures.whenCreateCategory()).rejects.toThrow(new NotFoundException("An error occures while creating category"));
+            await expect(fixtures.whenDeleteCategory()).rejects.toThrow(new NotFoundException("Product not found"));;
         });
 
-        it('When create category failed should throw exception', async () => {
+        it('When delete category failed should throw exception', async () => {
             fixtures.whenCategoryToDeleteFailed();
-            await expect(fixtures.whenCreateCategory()).rejects.toThrow(new InternalServerErrorException("An error occures while creating category"));
+            await expect(fixtures.whenDeleteCategory()).rejects.toThrow(new InternalServerErrorException("An error occures while deleting category"));
         });
     });
 });
@@ -122,11 +122,15 @@ const getFixtures = () => {
 
     //getAll
     const whenFetchAllCategoriesSucceed = () => {
-        jest.spyOn(CategoryModel, 'find').mockResolvedValue(categoriesMock);
+        jest.spyOn(CategoryModel, 'find').mockImplementation(() => ({
+            select: jest.fn().mockResolvedValue(categoriesMock),
+        }) as any);
     }
 
     const whenFinAllCategoriesFailed = () => {
-        jest.spyOn(CategoryModel, 'find').mockRejectedValue(new Error('An error occures while getting categories'));
+        jest.spyOn(CategoryModel, 'find').mockImplementation(() => ({
+            select: jest.fn().mockRejectedValue(new Error('An error occures while getting categories')),
+        }) as any);
     }
 
     const whenFetchCategories = async () => {
@@ -188,7 +192,7 @@ const getFixtures = () => {
     }
 
     const whenCategoryToDeleteFailed = () => {
-        jest.spyOn(CategoryModel, 'findByIdAndDelete').mockResolvedValue(new Error('Delete error'));
+        jest.spyOn(CategoryModel, 'findByIdAndDelete').mockRejectedValue(new Error('An error occures while deleting category'));
     }
 
     const whenDeleteCategory = () => {

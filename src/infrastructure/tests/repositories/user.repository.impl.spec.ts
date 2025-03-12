@@ -94,10 +94,10 @@ describe("UserRepositoryImplementation", () => {
             await expect(fixtures.whenFetchById()).rejects.toThrow(new HttpException('User not found', 404));
         });
 
-        // it('When user search fail then return error response',  async () => {
-        //     fixtures.whenUserSearchFailed();
-        //     await expect(fixtures.whenFetchById()).rejects.toThrow("An error occures while getting user");
-        // });
+        it('When user search fail then return error response',  async () => {
+            fixtures.whenUserSearchFailed();
+            await expect(fixtures.whenFetchById()).rejects.toThrow("An error occures while getting user");
+        });
     });
     describe('update', () => {
         
@@ -266,8 +266,9 @@ const getFixtures = () => {
     };
 
     const whenUserSearchFailed = () => {
-        // jest.spyOn(UserModel, 'findById').mockRejectedValue(new HttpException("An error occurs while getting user", HttpStatus.INTERNAL_SERVER_ERROR));
-        jest.spyOn(UserModel, 'findById').mockRejectedValue(new Error('An error occures while fetching user'));
+        jest.spyOn(UserModel, 'findById').mockImplementation(() => ({
+            select: jest.fn().mockRejectedValue(new Error('An error occures while getting user')),
+        }) as any);
     };
 
     const whenFetchById = async () => {
