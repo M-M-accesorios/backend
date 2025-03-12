@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { BadRequestException, HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { UserRepository } from "src/core/domain/repositories/user.repository";
-import { ErrorResponse, SuccessResponse, User, UserDocument } from 'src/infrastructure/types/users/index.type';
+import { User, UserDocument } from 'src/infrastructure/types/users/index.type';
 import { UserModel } from '../models/user.model';
 import { LoginUserDto } from 'src/application/dtos/user/login.dto';
 import { TokenResponse } from 'src/infrastructure/types/users/index.type';
@@ -66,7 +66,7 @@ export class UserRepositoryImplementation implements UserRepository {
         try {
             const user = await UserModel.findById(id).select('-__v -_id -password -role');
             if(!user){
-                throw Error('User not found');
+                throw new NotFoundException('User not found');
             }
             return user;
         } catch (error) {
@@ -77,33 +77,27 @@ export class UserRepositoryImplementation implements UserRepository {
         }
     }
 
-    async update(id: string, body: object): Promise<SuccessResponse | ErrorResponse> {
+    async update(id: string, body: object): Promise<UserDocument> {
         try {
             const updatedUser = await UserModel.findByIdAndUpdate(id, body, { new: true });
-            return {
-                success: true,
-                data: updatedUser,
-            };
+            return updatedUser;
         } catch (error) {
-            return {
-                success: false,
-                message: `[${UserRepositoryImplementation.name}] ${error instanceof Error ? error.message : 'An error occures while updating user'}`,
-            };
+            throw new HttpException(
+                error instanceof Error ? error.message : 'An error occurred while logging in',
+                error instanceof HttpException ? error.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR,
+            );
         }
     }
 
-    async delete(id: string): Promise<SuccessResponse | ErrorResponse> {
+    async delete(id: string): Promise<UserDocument> {
         try {
             const deletedUser = await UserModel.findByIdAndDelete(id);
-            return {
-                success: true,
-                data: deletedUser,
-            };
+            return deletedUser;
         } catch (error) {
-            return {
-                success: false,
-                message: `[${UserRepositoryImplementation.name}] ${error instanceof Error ? error.message : 'An error occures while deleting user'}`,
-            };
+            throw new HttpException(
+                error instanceof Error ? error.message : 'An error occurred while logging in',
+                error instanceof HttpException ? error.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR,
+            );
         }
     }
 }

@@ -11,16 +11,6 @@ export interface User {
     role?: string;
 }
 
-export type ErrorResponse = {
-    success: boolean;
-    message: string;
-}
-export type SuccessResponse = {
-    success: boolean;
-    token?: string;
-    data?: UserDocument;
-}
-
 export type TokenResponse = {
     token: string;
 }

@@ -17,12 +17,18 @@ const ProductSchema: Schema = new Schema({
     ref: {
         type: String,
         required: true,
-        unique:true
+        unique:true,
     },
     image: {
         type: String,
         required: true,
     },
+    categories:[
+        {
+            type: Schema.Types.ObjectId,
+            required: true,
+        },
+    ],
 });
 
 export const ProductModel = mongoose.model<ProductDocument>('Product', ProductSchema);

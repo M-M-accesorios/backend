@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
 import { CreateProductDto } from "src/application/dtos/product/create-product.dto";
 import { UpdateProductDto } from "src/application/dtos/product/update-product.dto";
 import { CreateProductUseCase } from "src/core/domain/use-cases/product/create-product-use-case";
@@ -18,8 +18,9 @@ export class ProductController {
     ) {};
 
     @Get()
-    async getAllProducts() {
-        return this.getAllProductsUseCase.execute();
+    async getAllProducts(@Query('category') category?: string) {
+        console.log(category)
+        return this.getAllProductsUseCase.execute(category);
     }
 
     @Get('/:id')
